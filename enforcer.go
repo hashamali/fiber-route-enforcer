@@ -12,7 +12,7 @@ func New() fiber.Handler {
 		defer func() {
 			rawRouteFound := c.Locals(routeFoundKey)
 			routeFound, ok := rawRouteFound.(bool)
-			if !ok || !routeFound {
+			if (!ok || !routeFound) && (c.Fasthttp.Response.StatusCode() == http.StatusOK) {
 				c.Status(http.StatusNotFound)
 			}
 		}()

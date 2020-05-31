@@ -23,6 +23,24 @@ func TestEnforcerNoRoutes(t *testing.T) {
 	}
 }
 
+func TestEnforcerNoRoutesButMiddlewareCustomResponse(t *testing.T) {
+	a := fiber.New()
+	a.Use(New())
+	a.Use(func(c *fiber.Ctx) {
+		c.Status(http.StatusNoContent)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	resp, err := a.Test(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.StatusCode == http.StatusNotFound {
+		t.Fatal("should not receive 404")
+	}
+}
+
 func TestEnforcerRoutes(t *testing.T) {
 	route := "/test"
 
